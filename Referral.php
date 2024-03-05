@@ -48,7 +48,7 @@ function gil_r_load_public_resources( $options = array() )
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
     ) );
 
-    // wp_enqueue_style( 'ewm-wr-style_public', plugins_url( basename( dirname( __FILE__ ) ) . '/assets/style-public.css' ) );
+    wp_enqueue_script( 'gil-r-public-ui-lib-uploader-js', 'http://code.jquery.com/ui/1.11.0/jquery-ui.js', 'jquery' );
 
 }
 
@@ -86,9 +86,28 @@ function gil_r_admin_menu()
         2
     ) ;
 
+    // Thank you page
+    add_submenu_page(
+        'gil-r-child',
+        'Thank you page',
+        'Thank you page',
+        'edit_pages',
+        'gil-r-typ',
+        'gil_r_typ',
+        2
+    ) ;
+
 }
 
 add_action( 'admin_menu', 'gil_r_admin_menu' );
+
+function gil_r_typ(){
+
+    // setup guidlines
+    include dirname( __FILE__ ) . '/templates/thank_you_page_settings.php';
+
+}
+
 function gil_r_admin_page_contents(){
 
     // setup guidlines
@@ -366,6 +385,22 @@ function gil_f_save_email_d(){
 
     echo json_encode( [
         'email_save' => true
+    ] );
+
+    wp_die();
+
+}
+
+// Thank you page id
+add_action( "wp_ajax_nopriv_gil_r_save_thankyou_page_id", "gil_r_save_thankyou_page_id" );
+add_action( "wp_ajax_gil_r_save_thankyou_page_id", "gil_r_save_thankyou_page_id" );
+
+function gil_r_save_thankyou_page_id(){
+    
+    update_option( 'gil_thankyou_id', $_POST['gil_thankyou_id'] );
+
+    echo json_encode( [
+        'api_save' => true
     ] );
 
     wp_die();

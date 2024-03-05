@@ -67,6 +67,62 @@ jQuery(document).ready( function($) {
 
     } )
 
+    $('.gil_r_save_thankyou_page_id').click( function(){
+
+        gil_r_save_thankyou_page_id();
+
+    } )
+
+    $('.gil_thankyou_id').focus( function(){
+        $('.gil_update_typ_message_area').html('');
+    } )
+
+    var gil_r_save_thankyou_page_id = function(){
+
+        $('.gil_update_typ_message_area').html('');
+
+        var form_data = new FormData() ;
+
+        gil_thankyou_id = $(".gil_thankyou_id").val();
+
+        if( gil_thankyou_id > 0 ){
+            console.log('looks good');
+            console.log( gil_thankyou_id );
+        }
+        else{
+            alert( 'Please make sure that that you hav selected a thank you page before saving' );
+            console.log( gil_thankyou_id );
+        }
+
+        form_data.append( 'action' , 'gil_r_save_thankyou_page_id' );
+
+        form_data.append( 'gil_thankyou_id' , gil_thankyou_id ) ;
+
+        jQuery.ajax( {
+
+            url: ajax_object.ajaxurl,
+            type: 'post',
+            contentType: false,
+            processData: false,
+            data: form_data,
+            success: function ( response ) {
+
+                console.log( response );
+                response = JSON.parse( response );
+                $('.gil_update_typ_message_area').html(' Thank you page updated successfully ');
+
+            },
+            error: function (response) {
+
+                console.log( response );
+
+            }
+
+        } ) ;
+        
+    }
+
+
     var gil_send_hubspot_api_details = function(){
 
         var form_data = new FormData() ;

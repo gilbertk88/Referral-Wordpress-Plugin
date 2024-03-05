@@ -12,7 +12,7 @@
         border-radius: 0px;
         border: 0px;
         cursor: pointer;
-        background:green;
+        background: #871dc1;
         color: #fff;
         margin-top: 20px;
     }
@@ -42,14 +42,14 @@
         background-color: #fff;
         margin-right: 10px;
         padding: 10px;
-        border: 1px solid #ccc3;
         border-radius: 0px;
     }
     .gil_f_sec_inner{
-        background-color: #ccc1;
+        background-color: #fff;
         padding: 20px;
         margin-top: 20px;
         border-radius: 0px;
+        border: 1px solid #ccc;
     }
     .gil_f_sec_bottom_menu{
         width: 100%;
@@ -58,12 +58,12 @@
     .gil_f_new_referee{
         float: right;
         background-color: #ccc1;
-        color: green;
+        color: #871dc1;
         border: 0px;
         padding: 10px;
         cursor: pointer;
         border-radius: 0px;
-        border: 1px solid green;
+        border: 1px solid #871dc1;
     }
     .gil_f_sec_bottom_menu{
         overflow: auto;
@@ -71,7 +71,7 @@
         width: 95%;
     }
     .gil_f_new_save_contacts{
-        background-color: green;
+        background-color: #871dc1;
         color: white;
         border: 0px;
         padding: 20px;
@@ -91,8 +91,45 @@
     .gil_f_referral_direction{
         color:#333;
     }
+    #ui-datepicker-div{
+        background-color: #fff;
+        padding: 30px;
+        border: 1px solid #3331;
+        border-radius: 0px;
+        margin: 0px;
+    }
+
+    .ui-datepicker-prev , .ui-datepicker-next {
+        background-color: green;
+        color:#fff;
+        padding: 5px 15px;
+        margin: 0px 10px;
+        border-radius: 5px;
+    }
+
+    .gil_super_required{
+        font-size: .83em ;
+        vertical-align: super ;
+        color:red ;
+        padding: 5px;
+    }
 
 </style>
+
+<?php
+
+    $gil_thankyou_id = get_option( 'gil_thankyou_id' ) ;
+
+    if( $gil_thankyou_id !== false ){
+        $gil_thankyou_id = $gil_thankyou_id ;
+    }
+    else{
+        $gil_thankyou_id = '0' ;
+    }
+    
+    echo '<script> var gil_thankyou_id = ' . $gil_thankyou_id . ';</script> ' ;
+
+?>
 
 <div class="gil_f_wrap">
 
@@ -105,7 +142,7 @@
     <div>
         Your Full Name
         <br>
-        <input type="text" placeholder="Your Full Names" class="gil_f_referral_name">
+        <input type="text" placeholder="Your first name and last name" class="gil_f_referral_name">
     </div>
     <div class="gil_f_referral_direction">
         Please provide up to 20 people that would be glad to hear about us
@@ -146,7 +183,7 @@
                 </div>
                 <div  class="gil_f_sec_50">
                     Birthday<br>
-                    <input type="text" placeholder="Date/Month/Year" class="gil_f_field_input" id="gil_f_pnumber_0">
+                    <input type="text" placeholder="Month/ Date/ Year" class="gil_f_field_input" id="gil_f_pnumber_0">
                 </div>
 
             </div>
@@ -154,7 +191,6 @@
         </div>
 
     </div>
-   
 
     <div class="gil_f_sec_bottom_menu">
         <center>
@@ -165,7 +201,7 @@
     <div class="gil_f_sec_bottom_menu">
         <center>
             <span class="gil_f_new_save_message"></span><br><br>
-            <input type="button" value="Save Contacts" class="gil_f_new_save_contacts">
+            <input type="button" value="Share Connections" class="gil_f_new_save_contacts">
         </center>
     </div>
 
