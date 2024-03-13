@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Referral (Premium)
  * Description: Allows a user to add referrals that are then sent an email and added onto hubspot.
- * Version: 1.0.1
+ * Version: 1.1.0
  * Update URI:
  * Author: James Powell
  * Author URI: 
@@ -41,14 +41,14 @@ add_action( 'wp_enqueue_scripts', 'gil_r_load_public_resources' );
 function gil_r_load_public_resources( $options = array() )
 {
     wp_enqueue_script( 'jquery' );
+    // wp_enqueue_script( 'jquery-ui-core', false, array('jquery') );
+    wp_enqueue_script('jquery-ui-datepicker');
 
     wp_enqueue_script( 'gil-r-public-main-lib-uploader-js', plugins_url( basename( dirname( __FILE__ ) ) . '/assets/script-public.js', 'jquery' ) );
 
     wp_localize_script( 'gil-r-public-main-lib-uploader-js', 'ajax_object', array(
         'ajaxurl' => admin_url( 'admin-ajax.php' ),
     ) );
-
-    wp_enqueue_script( 'gil-r-public-ui-lib-uploader-js', 'http://code.jquery.com/ui/1.11.0/jquery-ui.js', 'jquery' );
 
 }
 
@@ -422,14 +422,21 @@ function gil_r_process_single_email( $single_contact = [] ){
 
     $gil_get_email_post_id = get_option( 'gil_get_email_post_id' ) ;
     $gil_email_post_data = get_post( $gil_get_email_post_id ) ;
+    $original_text = $gil_email_post_data->post_content;
+
     $single_contact_email = get_post_meta( $single_contact['contact_id'] , 'email' ) ;
 
-    $single_contact_email = get_post_meta( $single_contact['contact_id'] , 'referrer' ) ;
+
+    $new_value = get_post_meta( $single_contact['contact_id'] , 'gil_f_referer', true ) ;
+
+    if( !$new_value ){
+        $new_value = 'a friend';
+    }
+
+    var_dump( $single_contact['contact_id'] );
 
     // schedule id
     $mail_subject   = get_post_meta( $gil_get_email_post_id, 'gil_email_subject', true ) ;
-    $new_value = 'gilbert kabui';
-    $original_text = $gil_email_post_data->post_content ;
     $mail_content = str_replace( '[referrer]', $new_value, $original_text ) ;
 
     $recipient_list = $single_contact_email ;
@@ -445,6 +452,7 @@ function gil_r_process_single_email( $single_contact = [] ){
     if( $single_contact_email !== false ) {
         $email_sent = wp_mail( $recipient_list, $mail_subject, $mail_content, $headers ) ;
         $email_update = update_post_meta( $single_contact['contact_id'] , 'email_sent', 'sent' ) ;
+        $email_sent = true ;
     }
 
 	return $email_sent;

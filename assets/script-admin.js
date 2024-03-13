@@ -62,8 +62,12 @@ jQuery(document).ready( function($) {
     } )
 
     $( ".gil_send_email" ).click( function( event ) {
+
+        var this_email = $( this );
         
         contact_id = $( this ).data( 'contact-id' ) ; // console.log( 'send email' ) ; // console.log( contact_id ) ;
+
+        $( this ).val( 'Sending...' ) ;
 
         var form_data = new FormData() ;
 
@@ -84,6 +88,7 @@ jQuery(document).ready( function($) {
                 $('.gil_reponse_popup_background').show() ;
                 $( '#gil_email_line_' + response.post_id ).html( '' ) ;
                 $('.gil_reponse_popup_inner').html( '<center>' + response.message + '</center>' ) ;
+                this_email.val( 'Send Email' ) ;
             
             } ,
             error: function ( response ) {
@@ -97,6 +102,10 @@ jQuery(document).ready( function($) {
     $( ".gil_send_hubspot" ).click( function( event ) {
 
         contact_id = $(this).data( 'contact-id' ) ;
+
+        var this_api = $( this );
+        
+        $( this ).val( 'Sending...' ) ; 
 
         var form_data = new FormData() ;
 
@@ -118,6 +127,9 @@ jQuery(document).ready( function($) {
                     $( '#gil_api_line_' + response.post_id ).html('<center></center>') ;
                 }
                 $('.gil_reponse_popup_inner').html( '<center>' + response.message + '</center>' ) ;
+
+                this_api.val( 'Send to Hubspot' );
+
             },
             error: function ( response ) {
                 console.log( response ) ;

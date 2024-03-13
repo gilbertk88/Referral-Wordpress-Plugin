@@ -6,6 +6,10 @@ jQuery(document).ready( function($) {
     var gil_f_contact_id = 0;
     var gil_f_referer = {};
 
+    function showMessage() {
+        console.log("Hello, I am being displayed every 2 seconds!");
+    }
+    
     $('.gil_f_save_referer').click( function() {
 
         gil_f_referer = {
@@ -19,6 +23,8 @@ jQuery(document).ready( function($) {
 
         $( "#gil_f_fname_0" ).val( stringArray[0] );
         $( "#gil_f_lname_0" ).val( stringArray[2] );
+
+        // setInterval( showMessage, 2000 );
 
         $( "#gil_f_pnumber_0" ).datepicker( { dateFormat: "dd/ mm/ yy",
             onSelect:function( date ){
