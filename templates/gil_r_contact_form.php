@@ -49,7 +49,7 @@
         padding: 20px;
         margin-top: 20px;
         border-radius: 0px;
-        border: 1px solid #ccc;
+        border: 1px solid #ccc5;
     }
     .gil_f_sec_bottom_menu{
         width: 100%;
@@ -90,6 +90,9 @@
     }
     .gil_f_referral_direction{
         color:#333;
+        padding: 30px;
+        border: 1px solid #ddd;
+        background-color: #ccc;
     }
     #ui-datepicker-div{
         background-color: #fff;
@@ -98,20 +101,27 @@
         border-radius: 0px;
         margin: 0px;
     }
-
     .ui-datepicker-prev , .ui-datepicker-next {
-        background-color: green;
-        color:#fff;
-        padding: 5px 15px;
-        margin: 0px 10px;
-        border-radius: 5px;
+        background-color: green ;
+        color:#fff ;
+        padding: 5px 15px ;
+        margin: 0px 10px 10px 0px ;
+        border-radius: 0px ;
+        text-decoration: none ;
+        cursor: pointer ;
     }
-
     .gil_super_required{
         font-size: .83em ;
         vertical-align: super ;
         color:red ;
-        padding: 5px;
+        padding: 5px ;
+    }
+    .gil_f_introduction{
+        padding: 30px ;
+        background-color: #871dc1 ;
+        color: white ;
+        font-size: larger ;
+        border-radius: 0px ;
     }
 
 </style>
@@ -145,7 +155,7 @@
         <input type="text" placeholder="Your first name and last name" class="gil_f_referral_name">
     </div>
     <div class="gil_f_referral_direction">
-        Please provide up to 20 people that would be glad to hear about us
+    Just like it’s happened with you in the past, many find new music through their friends. Your friends are the most likely way we’ll continue to reach new people and spread our message All Souls | One Root | One Sound…the sound of Love. Please add an unlimited number of people you think will enjoy our music and will enjoy being a part of the Cocoon. Thank You!!!
         <br>
         <input type="hidden" name="description" placeholder class="gil_f_referral_body">
     </div>
@@ -156,8 +166,10 @@
 
 <div class="gil_f_wrap_contacts">
 
-    <div>
-        <center>Please add an unlimited number of referees here</center>
+    <div class="gil_f_introduction">
+        <center>
+            Your connections can help us reach more fans. Please add an unlimited number of people you think will enjoy our music and will enjoy being a part of the Cocoon.
+        </center>
     </div>
 
     <div class="gil_f_sec_wrap">

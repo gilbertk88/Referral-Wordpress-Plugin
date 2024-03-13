@@ -54,39 +54,45 @@
 
     <?php
 
-            $gil_get_email_post_id = gil_get_email_post_id();
+        $gil_get_email_post_id = gil_get_email_post_id();
 
-            $post_d = get_post( $gil_get_email_post_id );
+        $post_d = get_post( $gil_get_email_post_id );
 
-            $gil_email_from = '';
+        $gil_email_from     = '' ;
+        $gil_email_subject  = '' ;
       
-            $pp_data = get_post_meta( $gil_get_email_post_id ) ;
+        $pp_data = get_post_meta( $gil_get_email_post_id ) ;
             
-            if( array_key_exists( 'gil_email_from', $pp_data ) ){
-                $gil_email_from = $pp_data['gil_email_from'][0] ;
-            }
+        if( array_key_exists( 'gil_email_from', $pp_data ) ){
+            $gil_email_from = $pp_data['gil_email_from'][0] ;
+        }
 
-            if( array_key_exists( 'gil_email_subject', $pp_data ) ){
-                $gil_email_subject = $pp_data['gil_email_subject'][0];
-            }
+        if( array_key_exists( 'gil_email_subject', $pp_data ) ){
+            $gil_email_subject = $pp_data['gil_email_subject'][0];
+        }
 
     ?>
 
     <div>
 
             <div class="gil_email_section">
-                "From" Email Address<br>
+                <b>"From" Email Address</b> <br><br>
                 <input type="text" placeholder='Enter "From" Email Address' class="gil_email_from" value="<?php echo $gil_email_from ; ?>">
             </div>
             
             <div  class="gil_email_section">
-                Email Subject<br>
+                <b>Email Subject</b> <br><br>
                 <input type="text" placeholder="Enter email subject" class="gil_email_subject" value="<?php echo $gil_email_subject  ?>">
             </div>
 
             <div  class="gil_email_section">
-                Email Body<br>
-                <textarea type="text" class="gil_email_body"><?php echo $post_d->post_content ; ?></textarea>
+                <b>Email Body</b> <br>
+                Please use the following shortcode to insert the referers' name in the email: <b>[referrer]</b>
+                <br><br><br>
+                <?php
+				    $text = $post_d->post_content ; //get_post_meta( $post, 'SMTH_METANAME' , true ) ;    // <textarea type="text" class="gil_email_body"><?php echo $post_d->post_content </textarea>
+				    wp_editor( $text , 'gil-main-email-text_input' , $settings = array( 'textarea_name'=>'gs-main-text_input' ) );
+				?>
             </div>
 
             <div  class="gil_email_section">

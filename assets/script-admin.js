@@ -5,32 +5,37 @@ jQuery(document).ready( function($) {
         gil_valid = true;
 
         if( $(".gil_email_from").val().length == 0 ){
-            $(".gil_email_from").css( "border", "1px solid red !important" );
-            gil_valid = false;
+            $(".gil_email_from").css( "border", "1px solid red !important" ) ;
+            gil_valid = false ;
         }
 
         if( $(".gil_email_subject").val().length == 0 ){
-            $(".gil_email_subject").css( "border", "1px solid red" );
-            gil_valid = false;
+            $(".gil_email_subject").css( "border", "1px solid red" ) ;
+            gil_valid = false ;
         }
-
+        /*
         if( $(".gil_email_body").val().length == 0 ){
             $(".gil_email_body").css( "border", "1px solid red" );
             gil_valid = false;
         }
+        */
 
-        return gil_valid;
+        return gil_valid ;
         
     }
 
-    var  gil_send_email_details = function (){
+    $('.gil_close_popup_dialog').click( function(e){
+        $('.gil_reponse_popup_background').hide();
+    } )
+
+    $( ".gil_delete_contact" ).click( function( event ) {
+
+        contact_id = $( this ).data( 'contact-id' ) ;
 
         var form_data = new FormData() ;
 
-        form_data.append( 'action' , 'gil_f_save_email_d' ) ;
-        form_data.append( 'gil_email_from' , $(".gil_email_from").val() ) ;
-        form_data.append( 'gil_email_subject' , $(".gil_email_subject").val() ) ;
-        form_data.append( 'gil_email_body' , $(".gil_email_body").val() ) ;
+        form_data.append( 'action' , 'gil_delete_contact' ) ;
+        form_data.append( 'gil_contact_id', contact_id ) ;
 
         jQuery.ajax( {
 
@@ -40,7 +45,105 @@ jQuery(document).ready( function($) {
             processData: false,
             data: form_data,
             success: function ( response ) {
-                console.log( response );
+                // console.log( response );
+                response = JSON.parse( response ) ;
+
+                $('.gil_reponse_popup_background').show() ;
+                $( '#gil_table_line_' + response.post_id ).remove() ;
+                $('.gil_reponse_popup_inner').html( '<center>' + response.message + '</center>' ) ; // $('.gil_update_message_area').html(' Email updated successfully ') ;
+
+            },
+            error: function ( response ) {
+                console.log( response ) ;
+            }
+
+        } ) ;
+
+    } )
+
+    $( ".gil_send_email" ).click( function( event ) {
+        
+        contact_id = $( this ).data( 'contact-id' ) ; // console.log( 'send email' ) ; // console.log( contact_id ) ;
+
+        var form_data = new FormData() ;
+
+        form_data.append( 'action' , 'gil_send_email' ) ;
+        form_data.append( 'gil_send_email_id', contact_id ) ;
+
+        jQuery.ajax( {
+
+            url: ajax_object.ajaxurl ,
+            type: 'post' ,
+            contentType: false ,
+            processData: false ,
+            data: form_data,
+            success: function ( response ) { // console.log( response ) ;
+
+                response = JSON.parse( response ) ;
+
+                $('.gil_reponse_popup_background').show() ;
+                $( '#gil_email_line_' + response.post_id ).html( '' ) ;
+                $('.gil_reponse_popup_inner').html( '<center>' + response.message + '</center>' ) ;
+            
+            } ,
+            error: function ( response ) {
+                console.log( response ) ;
+            }
+
+        } ) ;
+
+    } )
+
+    $( ".gil_send_hubspot" ).click( function( event ) {
+
+        contact_id = $(this).data( 'contact-id' ) ;
+
+        var form_data = new FormData() ;
+
+        form_data.append( 'action' , 'gil_send_hubspot' ) ;
+        form_data.append( 'gil_send_hubspot_id', contact_id ) ;
+
+        jQuery.ajax( {
+
+            url: ajax_object.ajaxurl,
+            type: 'post',
+            contentType: false,
+            processData: false,
+            data: form_data,
+            success: function ( response ) {
+                // console.log( response );
+                response = JSON.parse( response ) ;
+                $('.gil_reponse_popup_background').show() ;
+                if( response.api_is_sent == true ) {
+                    $( '#gil_api_line_' + response.post_id ).html('<center></center>') ;
+                }
+                $('.gil_reponse_popup_inner').html( '<center>' + response.message + '</center>' ) ;
+            },
+            error: function ( response ) {
+                console.log( response ) ;
+            }
+
+        } ) ;
+
+    } ) ;
+
+    var  gil_send_email_details = function (){
+
+        var form_data = new FormData() ;
+
+        form_data.append( 'action' , 'gil_f_save_email_d' ) ;
+        form_data.append( 'gil_email_from' , $(".gil_email_from").val() ) ;
+        form_data.append( 'gil_email_subject' , $(".gil_email_subject").val() ) ;
+        form_data.append( 'gil_email_body', tinyMCE.activeEditor.getContent() ) ;
+
+        jQuery.ajax( {
+
+            url: ajax_object.ajaxurl,
+            type: 'post',
+            contentType: false,
+            processData: false,
+            data: form_data,
+            success: function ( response ) {
                 response = JSON.parse( response );
                 $('.gil_update_message_area').html(' Email updated successfully ');
             },
@@ -121,7 +224,6 @@ jQuery(document).ready( function($) {
         } ) ;
         
     }
-
 
     var gil_send_hubspot_api_details = function(){
 

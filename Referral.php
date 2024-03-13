@@ -3,7 +3,7 @@
 /**
  * Plugin Name: Referral (Premium)
  * Description: Allows a user to add referrals that are then sent an email and added onto hubspot.
- * Version: 1.0.0
+ * Version: 1.0.1
  * Update URI:
  * Author: James Powell
  * Author URI: 
@@ -89,8 +89,8 @@ function gil_r_admin_menu()
     // Thank you page
     add_submenu_page(
         'gil-r-child',
-        'Thank you page',
-        'Thank you page',
+        'Thank You Page',
+        'Thank You Page',
         'edit_pages',
         'gil-r-typ',
         'gil_r_typ',
@@ -191,6 +191,101 @@ function gil_f_save_list_of_contacts( $entries = [] ){
     }
 
     return $post_id;
+
+}
+
+add_action( "wp_ajax_nopriv_gil_send_email", "gil_send_email" );
+add_action( "wp_ajax_gil_send_email", "gil_send_email" );
+function gil_send_email(){
+
+    $email_sent = gil_r_process_single_email( [
+        'contact_id' => $_POST['gil_send_email_id'] ,
+    ] ) ;
+
+    $message = '';
+
+    if( $email_sent ){
+        $message = 'Email has been successfully sent' ;
+    }
+    else{
+        $message = 'Email was not sent, please make sure that the email is entered correctly' ;
+    }
+
+    echo json_encode( [
+        'post_id' => $_POST[ 'gil_send_email_id' ] ,
+        'message' => $message,
+    ] ) ;
+
+    wp_die();
+    
+}
+
+// Send hubspot
+add_action( "wp_ajax_nopriv_gil_send_hubspot", "gil_send_hubspot" ) ;
+add_action( "wp_ajax_gil_send_hubspot", "gil_send_hubspot" ) ;
+function gil_send_hubspot() {
+
+    $contact_id = $_POST[ "gil_send_hubspot_id" ] ;
+
+    $fname = get_post_meta( $contact_id , 'fname', true ) ;
+    $lname = get_post_meta( $contact_id , 'lname', true ) ;
+    $email = get_post_meta( $contact_id , 'email', true ) ;
+    $phone = get_post_meta( $contact_id , 'phone', true ) ;
+    $field_id = get_post_meta( $contact_id , 'field_id', true ) ;
+    $gil_f_referer = get_post_meta( $contact_id , 'gil_f_referer', true ) ;
+
+    $hubspot_api_sent = get_post_meta( $contact_id , 'hubspot_api_sent', true ) ;
+
+    $gil_api_is_sent = gil_r_send_single_contact_to_hubspot( [
+            'contact_id'=> $contact_id,
+            'email'     => $email,
+            'firstname' => $fname,
+            'lastname'  => $lname,
+            'phone'     => $phone,
+            'field_id'  => $field_id,
+            'referer'   => $gil_f_referer
+    ] ) ;
+
+    if( $gil_api_is_sent ) {
+        $message = 'Hubspot API has been successfully updated' ;
+    }
+    else {
+        $message = 'An error happened, Hubspot API was not successfully updated' ;
+    }
+
+    echo json_encode( [
+        'post_id' => $contact_id ,
+        'message' => $message ,
+        'api_is_sent' => $gil_api_is_sent
+    ] ) ;
+
+    wp_die() ;
+
+}
+
+// gil_delete_contact
+add_action( "wp_ajax_nopriv_gil_delete_contact", "gil_delete_contact" );
+add_action( "wp_ajax_gil_delete_contact", "gil_delete_contact" );
+function gil_delete_contact() {
+
+    $_POST_data = get_post( $_POST['gil_contact_id'] );
+
+    $_message = '' ;
+
+    if( is_null( $_POST_data ) ){
+        $_message = 'Contact had already been deleted.' ;
+    }
+    else{
+        $gil_delete_status = wp_delete_post( $_POST['gil_contact_id'] ) ;
+        $_message = 'Contact has been successfully deleted.';
+    }
+
+    echo json_encode( [
+        'post_id' => $_POST['gil_contact_id'] ,
+        'message' => $_message ,
+    ] ) ;
+
+    wp_die();
 
 }
 
@@ -325,29 +420,38 @@ function gil_get_email_post_id() {
 
 function gil_r_process_single_email( $single_contact = [] ){
 
-    $gil_get_email_post_id = get_option( 'gil_get_email_post_id' );
-    $gil_email_post_data = get_post( $gil_get_email_post_id );
+    $gil_get_email_post_id = get_option( 'gil_get_email_post_id' ) ;
+    $gil_email_post_data = get_post( $gil_get_email_post_id ) ;
     $single_contact_email = get_post_meta( $single_contact['contact_id'] , 'email' ) ;
+
+    $single_contact_email = get_post_meta( $single_contact['contact_id'] , 'referrer' ) ;
 
     // schedule id
     $mail_subject   = get_post_meta( $gil_get_email_post_id, 'gil_email_subject', true ) ;
-    $mail_content   = $gil_email_post_data->post_content ;
+    $new_value = 'gilbert kabui';
+    $original_text = $gil_email_post_data->post_content ;
+    $mail_content = str_replace( '[referrer]', $new_value, $original_text ) ;
+
     $recipient_list = $single_contact_email ;
+
     $email_from     = get_post_meta( $gil_get_email_post_id, 'gil_email_from', TRUE ) ;
 
-    $headers  = 'MIME-Version: 1.0' . "\r\n";
+    $headers  = 'MIME-Version: 1.0' . "\r\n" ;
     $headers .= 'Content-Type: text/html; charset=ISO-8859-1' . "\r\n" ;
     $headers .= 'From: '. $email_from . "\r\n" ;
 
-    $email_sent = wp_mail( $recipient_list, $mail_subject, $mail_content, $headers ) ;
+    $email_sent  = false;
 
-    $email_update = update_post_meta( $single_contact['contact_id'] , 'email_sent', 'sent' );
+    if( $single_contact_email !== false ) {
+        $email_sent = wp_mail( $recipient_list, $mail_subject, $mail_content, $headers ) ;
+        $email_update = update_post_meta( $single_contact['contact_id'] , 'email_sent', 'sent' ) ;
+    }
 
 	return $email_sent;
     
 }
 
-// todo trigger -> 
+// todo trigger ->
 function gil_r_schedule_emails(){
 
     require_once(rtrim($_SERVER['DOCUMENT_ROOT'], '/') . '/wp-load.php');
@@ -359,9 +463,7 @@ function gil_r_schedule_emails(){
         'meta_key'    => 'email_sent',
         'meta_value'  => 'not_sent',
         'fields' => 'ids'
-    ] ) ;
-
-    // var_dump($gil_r_contact_emails_list );
+    ] ) ; // var_dump($gil_r_contact_emails_list );
 
     foreach( $gil_r_contact_emails_list as $email_k => $email_id ){
 
@@ -394,7 +496,6 @@ function gil_f_save_email_d(){
 // Thank you page id
 add_action( "wp_ajax_nopriv_gil_r_save_thankyou_page_id", "gil_r_save_thankyou_page_id" );
 add_action( "wp_ajax_gil_r_save_thankyou_page_id", "gil_r_save_thankyou_page_id" );
-
 function gil_r_save_thankyou_page_id(){
     
     update_option( 'gil_thankyou_id', $_POST['gil_thankyou_id'] );
@@ -457,6 +558,7 @@ function gil_r_send_single_contact_to_hubspot( $args = [] ) {
     $result = curl_exec($ch);
     if (curl_errno($ch)) {
         echo 'Error:' . curl_error($ch);
+        return false;
     }
     curl_close($ch);
     
@@ -491,17 +593,15 @@ function gil_r_loop_though_unsent_api(){
 
         $hubspot_api_sent = get_post_meta( $contact_id , 'hubspot_api_sent', true );
 
-        $gil_api_is_sent = gil_r_send_single_contact_to_hubspot(
-            [
-                'contact_id'=> $contact_id,
-                'email'     => $email,
-                'firstname' => $fname,
-                'lastname'  => $lname,
-                'phone'     => $phone,
-                'field_id'  => $field_id,
-                'referer'   => $gil_f_referer
-            ]
-        ) ;
+        $gil_api_is_sent = gil_r_send_single_contact_to_hubspot( [
+            'contact_id'=> $contact_id,
+            'email'     => $email,
+            'firstname' => $fname,
+            'lastname'  => $lname,
+            'phone'     => $phone,
+            'field_id'  => $field_id,
+            'referer'   => $gil_f_referer
+        ] ) ;
 
     }
     

@@ -28,6 +28,47 @@
         padding: 20px;
         border-radius: 0px;
     }
+    .gil_delete_contact, .gil_send_email, .gil_send_hubspot {
+        border: 1px solid #ccc ;
+        background-color: #fff ;
+        padding: 5px 20px ;
+        color: #333 ;
+        cursor: pointer ;
+        margin-bottom: 10px;
+    }
+    .gil_reponse_popup{
+        background-color: #fff ;
+        border: 1px solid #ccc;
+        width: 75%;
+        border-radius: 0px;
+        height: 50%;
+    }
+    .gil_reponse_popup_background{
+        position:fixed;
+        left: 0% ;
+        top: 0% ;
+        width: 100%;
+        height: 100%;
+        z-index: 10000;
+        background-color: #33333358;
+        padding: 10% ;
+        display: none;
+    }
+    .gil_reponse_popup_inner{
+        padding: 5% ;
+    }
+    .gil_reponse_popup_menu{
+        width: 100%;
+    }
+    .gil_close_popup_dialog{
+        float: right;
+        background-color: #871dc1 ;
+        color: #fff ;
+        border: 1px solid #871dc1 ;
+        padding: 10px 20px;
+        margin: 5px;
+        cursor: pointer;
+    }
 
 </style>
 
@@ -38,33 +79,30 @@
     </div>
 
     <div class="cl_short_code_doc">
-        <center> Shortcode: [referral_form] </center>
+        <center> Shortcode: <b>[referral_form]</b> </center>
     </div>
     <?php
 
-    $contact_list = get_posts( [
-        "post_status"   => "entered",
-        "post_type"     => "gil_f_cl",
-        'posts_per_page' => -1,
-    ] ) ;
+        $contact_list = get_posts( [
+            "post_status"   => "entered",
+            "post_type"     => "gil_f_cl",
+            'posts_per_page' => -1,
+        ] ) ; // gil_r_schedule_emails();
 
-    // gil_r_schedule_emails();
-
-    gil_r_loop_though_unsent_api();
+        gil_r_loop_though_unsent_api();
 
     ?>
 
     <table class="cl_table_cl">
         <tr>
-
             <td class="cl_table_header"><b>Name</b></td>
             <td class="cl_table_header"><b>Contact Details</b></td>
             <td class="cl_table_header"><b>Referer</b></td>
-
             <td class="cl_table_header"><b>Email sent</b></td>
             <td class="cl_table_header"><b>Hubspot API</b></td>
-
+            <td class="cl_table_header"></td>
         </tr>
+
         <?php
         
         foreach( $contact_list as  $contact) {
@@ -95,13 +133,17 @@
 
         ?>
 
-        <tr>
+        <tr id="gil_table_line_<?php echo $contact->ID; ?>">
             <td class="cl_table_body"><?php echo $fname .' '. $lname; ?></td>
             <td class="cl_table_body"><?php echo 'Email: '.$email .'<br>'; echo 'Birthday: '.$phone; ?></td>
             <td class="cl_table_body"><?php echo $gil_f_referer ; ?></td>
-
-            <td class="cl_table_body"><?php echo $email_sent; ?></td>
-            <td class="cl_table_body"><?php echo $hubspot_api_sent ; ?></td>
+            <td class="cl_table_body" id="gil_email_line_<?php echo $contact->ID; ?>"><?php echo $email_sent; ?></td>
+            <td class="cl_table_body" id="gil_api_line_<?php echo $contact->ID; ?>"><?php echo $hubspot_api_sent ; ?></td>
+            <td class="cl_table_body">
+                <input type="button" class="gil_delete_contact" value="Delete Contact" data-contact-id="<?php echo $contact->ID; ?>" > <br>
+                <input type="button" class="gil_send_email" value="Send Email" data-contact-id="<?php echo $contact->ID; ?>" > <br>
+                <input type="button" class="gil_send_hubspot" value="Send To Hubspot" data-contact-id="<?php echo $contact->ID; ?>" >
+            </td>
         </tr>
             
         <?php
@@ -110,4 +152,14 @@
 
     </table>
 
+</div>
+
+<div class="gil_reponse_popup_background">
+    <div class="gil_reponse_popup">
+        <div class="gil_reponse_popup_menu">
+            <input type="button" class="gil_close_popup_dialog" value="Close" >
+        </div>
+        <div class="gil_reponse_popup_inner">
+        </div>
+    </div>
 </div>
