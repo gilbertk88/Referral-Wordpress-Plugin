@@ -2,8 +2,8 @@
 
 /**
  * Plugin Name: Referral (Premium)
- * Description: Allows a user to add referrals that are then sent an email and added onto hubspot.
- * Version: 1.1.0
+ * Description: Add referrals that are then sent an email and added onto hubspot.
+ * Version: 1.1.1
  * Update URI:
  * Author: James Powell
  * Author URI: 
