@@ -120,7 +120,8 @@ jQuery(document).ready( function($) {
             processData: false,
             data: form_data,
             success: function ( response ) {
-                // console.log( response );
+                
+                console.log( response );
                 response = JSON.parse( response ) ;
                 $('.gil_reponse_popup_background').show() ;
                 if( response.api_is_sent == true ) {
@@ -242,7 +243,9 @@ jQuery(document).ready( function($) {
         var form_data = new FormData() ;
 
         form_data.append( 'action' , 'gil_send_hubspot_api_details' ) ;
+        
         form_data.append( 'gil_hubspot_key_f' , $(".gil_hubspot_key_f").val() ) ;
+        form_data.append( 'gil_list_id' , '1' + $("#gil_list_id").val()  ) ;
 
         jQuery.ajax( {
 
